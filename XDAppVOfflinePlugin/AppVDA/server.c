@@ -29,7 +29,6 @@ unsigned long   ulBytesRead;
 int __cdecl main(INT argc, CHAR **argv)
 {
 	char* message;	
-	char* test;
 	int max_try;	
 	Prepacket prepacket;
 
@@ -57,62 +56,40 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("WFVirtualChannelQuery failed.\n"));
 		SafelyExit();		
-	}
-	
-	_tprintf(_T("Received maximum send size for channel as %d. Using this as maximum send buffer\n"),pAboutMeData->usMaxDataSize);
-	test = malloc(sizeof(char)*pAboutMeData->usMaxDataSize);
-	// Write a message to chanel	
+	}	
+	_tprintf(_T("Received maximum send size for channel as %d.\n"),pAboutMeData->usMaxDataSize);
+
+	// Write a message to chanel
 	message = "<Message>Hello from the server!</Message>";
 	pBuffer = createPacketFromData(message, strlen(message) + 1);
-
 	rc = WFVirtualChannelWrite(hVC, (PCHAR)pBuffer, pBuffer->length, &ulBytesWritten);
 	if (rc != TRUE) {
 		_tprintf(_T("Could not send message to virtual channel.\n"));
 		PrintMessage(GetLastError());
 		SafelyExit();
 		return -1;
-	}
-	_tprintf(_T("Wrote %lu bytes to virtual channel. Message(%s)\n"), ulBytesWritten, pBuffer->payload);
+	}	
+	_tprintf(_T("Sent Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesWritten);
+	//Read Response 
 
-	// read prepacket	
-
+	// read prepacket
 	rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)&prepacket, sizeof(Prepacket), &ulBytesRead);
 	if (rc != TRUE) {
 		_tprintf(_T("Could not receive message from virtual channel.\n"));
 		PrintMessage(GetLastError());
 		SafelyExit();
 		return;
-	}
-	_tprintf(_T("Received %lu bytes from virtual channel. Message(%d)\n"), ulBytesRead, prepacket.length);
-
-	_tprintf(_T("Attemptiong to read actual data of %d bytes...\n"), prepacket.length);
+	}	
 	
-	// read actual data
-	rc = FALSE;
-	while (rc != TRUE && max_try < 3) {
-		rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)pBuffer, prepacket.length, &ulBytesRead);
-		if (rc != TRUE) {
-			_tprintf(_T("Could not receive message from virtual channel.\n"));			
-			max_try++;
-			_tprintf(_T("Sleeping....\n"));
-			Sleep(2000);
-			
-		}
-	}
-	if (max_try == 3) { _tprintf(_T("Finished waiting...\n"), prepacket.length); }
-	if (rc != TRUE)
-	{
+	// Read actual data	
+	rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)pBuffer, prepacket.length, &ulBytesRead);
+	if (rc != TRUE) {
+		_tprintf(_T("Could not receive message from virtual channel.\n"));			
 		PrintMessage(GetLastError());
 		SafelyExit();
-		return;
-	}
-	_tprintf(_T("Attemptiong to read actual data of %d bytes...\n"), prepacket.length);
-	_tprintf(_T("Received %lu bytes from virtual channel.\n"), ulBytesRead);
-	_tprintf(_T("Received (%s) bytes from virtual channel.\n"), pBuffer->payload);
-	
-
-	_tprintf(_T("Done"));
-
+		return;			
+	}	
+	_tprintf(_T("Received Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesRead);
 	SafelyExit();
 }
 
@@ -121,12 +98,11 @@ int __cdecl main(INT argc, CHAR **argv)
 /* Cleans up before the program exists - for whatever reason*/
 void SafelyExit()
 {
-	_tprintf(_T("Entering SafelyExit()"));
 	if (pBuffer) {
 		free(pBuffer);
 		pBuffer = NULL;
 	}
-	_tprintf(_T("Exiting SafelyExit()"));
+	WFVirtualChannelClose(hVC);
 }
 
 VOID WINAPI PrintMessage(int nResourceID, ...)
