@@ -88,7 +88,7 @@ PVOID g_pWd = NULL;
 PQUEUEVIRTUALWRITEPROC LegacySend  = NULL;
 
 // Pointer to the HPC engine SendData function.
-PSENDDATAPROC EnhancedSend = NULL; 
+PSENDDATAPROC SendData = NULL; 
 
 // We'll keep track of if we've got data to send or not
 BOOL g_bBufferEmpty = TRUE;	
@@ -203,7 +203,7 @@ DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSiz
     g_bIsHpc = (HPC_VD_API_VERSION_LEGACY != vdwhex.usVersion);	
 	
 	// save HPC SendData API address
-	EnhancedSend = vdwhex.pSendDataProc;         
+	SendData = vdwhex.pSendDataProc;         
    
     // If it is an HPC client, tell it the highest version of the HPC API we support.
     if(g_bIsHpc)
@@ -266,7 +266,7 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, L
 	// Cast void pointer to SendReceiverBuffer ptr
 	WIRE_READ(SendReceiveBuffer, pPacket, pBuf);
 
-	DebugWrite("AppV: ICADataArrival entered. Data has arrived form the server.11\n");
+	DebugWrite("AppV: ICADataArrival entered. Data has arrived from the server.\n");
 	
     // This protocol is completely synchronous - host should not send
     // another message with a pending response.
@@ -280,33 +280,25 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, L
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
 	
 	message = "<Message>Hello from Receiver</Message>";
-	g_pAppV = createPacketFromData(message, strlen(message)+1);
-	DebugWrite("AppV:About to send this response: %s\n", g_pAppV->payload);
+	g_pAppV = createPacketFromData(message, strlen(message)+1);	
+	prepacket.length = g_pAppV->length;	
 
-	// first send the prepacket with length of the message:
-
-	
-	prepacket.length = g_pAppV->length;
-	
-	//DebugWrite("About to send this response: '%s' of length '%d' ", g_pAppV->payload, g_pAppV->length);
-
+	// Send Prepacket
     g_bBufferEmpty = FALSE;
-
-	DebugWrite("AppV:Preparing prepacket to host og length (%d)\n", prepacket.length);
-
 	g_MemorySections[0].pSection = (LPBYTE)&prepacket;		// The body of the data to be sent
 	g_MemorySections[0].length = (USHORT)sizeof(Prepacket);
+	rc = SendData((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);	
+	if (rc != CLIENT_STATUS_SUCCESS) {
+		DebugWrite("AppV: Unable to SendData().\n");
+	}
 
-	rc = EnhancedSend((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
-	DebugWrite("AppV:EnhancedSend result was (%d)\n", rc);
-	DebugWrite("AppV:Preparing to send actual data(%s) length (%d)\n", g_pAppV->payload, g_pAppV->length);
-    	
+    // Send actual data
     g_MemorySections[0].pSection = (LPBYTE)g_pAppV;		// The body of the data to be sent
     g_MemorySections[0].length = (USHORT)g_pAppV->length;	// Its length
-
-	rc = EnhancedSend((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
-	DebugWrite("AppV:EnhancedSend result was (%d)\n", rc);
-	DebugWrite("AppV:Sent actual data(%s)\n", g_pAppV->payload);
+	rc = SendData((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);	
+	if (rc != CLIENT_STATUS_SUCCESS) {
+		DebugWrite("AppV: Unable to SendData().\n");
+	}
 
 	g_bBufferEmpty = TRUE;
 	// In the HPC case, drive the outbound data that we just put on the queue.  
@@ -522,7 +514,7 @@ int PrepareAvailableDataForEnhancedSend(void)
 	if (NUMBER_OF_MEMORY_SECTIONS == 1)
 	{
 		// Finally send what is in the Memory_section via the HPC send function we determined earlier...
-		rc = EnhancedSend((DWORD)g_pWd,	g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
+		rc = SendData((DWORD)g_pWd,	g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
 	}
 	else
 	{
@@ -542,7 +534,7 @@ int PrepareAvailableDataForEnhancedSend(void)
 		}
 
 		// Now send the single buffer.
-		rc = EnhancedSend((DWORD)g_pWd, g_usVirtualChannelNum, g_pbaConsolidationBuffer, usTotalLength, &g_ulUserData, SENDDATA_NOTIFY);
+		rc = SendData((DWORD)g_pWd, g_usVirtualChannelNum, g_pbaConsolidationBuffer, usTotalLength, &g_ulUserData, SENDDATA_NOTIFY);
 	}
 
 	if (CLIENT_STATUS_SUCCESS == rc)
