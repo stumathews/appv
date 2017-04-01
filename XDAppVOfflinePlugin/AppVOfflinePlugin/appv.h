@@ -15,6 +15,10 @@
 
 #pragma pack(1)
 
+typedef struct Prepacket {
+	int length;
+} Prepacket;
+
 /* AppV buffer format*/
 typedef struct SRB {	
 	int length;
@@ -37,13 +41,12 @@ typedef struct _VDAPPV_C2H
 #pragma pack()
 
 unsigned packetPayloadLength(PSendReceiveBuffer packet) { return packet->length - sizeof(PSendReceiveBuffer) - 1; }
-PSendReceiveBuffer createPacketFromData(const char* data, unsigned dataSize, void(*logFunction)(char*))
+PSendReceiveBuffer createPacketFromData(const char* data, unsigned dataSize)
 {
 	unsigned packetSize = sizeof(SendReceiveBuffer) + dataSize - 1;	
 	PSendReceiveBuffer packet = (PSendReceiveBuffer)malloc(packetSize);	
 	packet->length = packetSize;
-	memcpy(packet->payload, data, dataSize);
-	logFunction( packet->payload);
+	memcpy(packet->payload, data, dataSize);	
 	return packet;
 }
 
