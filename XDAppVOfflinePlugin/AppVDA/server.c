@@ -18,25 +18,23 @@
 VOID WINAPI PrintMessage(int nResourceID, ...);
 void SafelyExit();
 
-PSendReceiveBuffer pBuffer = NULL;
-
-HANDLE      hVC = NULL;
-BOOLEAN     rc;
-PVDAPPV_C2H pAboutMeData = NULL;
-unsigned long ulBytesWritten;
-unsigned long   ulBytesRead;
-
 int __cdecl main(INT argc, CHAR **argv)
 {
 	char* message;	
 	int max_try;	
 	Prepacket prepacket;
+	PSendReceiveBuffer pBuffer = NULL;
+	HANDLE      hVC = NULL;
+	BOOLEAN     rc;
+	PVDAPPV_C2H pAboutMeData = NULL;
+	unsigned long ulBytesWritten;
+	unsigned long   ulBytesRead;
 
 	max_try = 0;
 
 	if ((pBuffer = (PSendReceiveBuffer)malloc(sizeof(SendReceiveBuffer))) == NULL) {
 		_tprintf(_T("Could not allocate send buffer structure.\n"));
-		SafelyExit(); 
+		SafelyExit(pBuffer);
 		return; 
 	}
 
@@ -47,7 +45,7 @@ int __cdecl main(INT argc, CHAR **argv)
 	}
 	else {
 		_tprintf(_T("Unable to open virtual channel\n"));
-		SafelyExit();
+		SafelyExit(pBuffer);
 		return;
 	}
 
@@ -66,18 +64,21 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("Could not send message to virtual channel.\n"));
 		PrintMessage(GetLastError());
-		SafelyExit();
+		SafelyExit(pBuffer);
 		return -1;
 	}	
 	_tprintf(_T("Sent Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesWritten);
+	
 	//Read Response 
+	// A response copnsists of two packets sent from the client.(PrePacket and a SendReceiveBuffer)
+	// The Prepacket contains the length of data in the SendReceiveBuffer that is sent next
 
-	// read prepacket
+	// Read prepacket
 	rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)&prepacket, sizeof(Prepacket), &ulBytesRead);
 	if (rc != TRUE) {
 		_tprintf(_T("Could not receive message from virtual channel.\n"));
 		PrintMessage(GetLastError());
-		SafelyExit();
+		SafelyExit(pBuffer);
 		return;
 	}	
 	
@@ -86,23 +87,23 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("Could not receive message from virtual channel.\n"));			
 		PrintMessage(GetLastError());
-		SafelyExit();
+		SafelyExit(pBuffer);
 		return;			
 	}	
 	_tprintf(_T("Received Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesRead);
-	SafelyExit();
+	SafelyExit(pBuffer);
 }
 
 
 
 /* Cleans up before the program exists - for whatever reason*/
-void SafelyExit()
+void SafelyExit(PSendReceiveBuffer pBuffer, HANDLE h)
 {
 	if (pBuffer) {
 		free(pBuffer);
 		pBuffer = NULL;
 	}
-	WFVirtualChannelClose(hVC);
+	WFVirtualChannelClose(h);
 }
 
 VOID WINAPI PrintMessage(int nResourceID, ...)
