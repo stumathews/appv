@@ -254,12 +254,12 @@ DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSiz
     return(CLIENT_STATUS_SUCCESS);
 }
 
-void print(char* message) { DebugWrite(message); }
-
 #pragma warning(disable:4028)
 DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, LPBYTE pBuf, USHORT Length)
 {	
 	char* message;
+	int rc;
+	Prepacket prepacket;
 	// Define a pointer pPacket
     WIRE_PTR(SendReceiveBuffer, pPacket);
 
@@ -278,25 +278,37 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, L
     }
 	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
-	DebugWrite("AppV: Sending response...\n");
-	DebugWrite("About to send this response11111\n");
-	message = "<Message>Hello from Receiver</Message>\n";
-	//g_pAppV = createPacketFromData(message, strlen(message), print);
-	//g_pAppV->length = strlen(message);
-	//memcpy(g_pAppV->payload, message, g_pAppV->length);
-	/* Fiddle with our data to send... */
 	
-	DebugWrite("About to send this response\n");
-	DebugWrite("About to send this response\n");
-	DebugWrite("About to send this response\n");
-	DebugWrite("About to send this response\n");
+	message = "<Message>Hello from Receiver</Message>";
+	g_pAppV = createPacketFromData(message, strlen(message)+1);
+	DebugWrite("AppV:About to send this response: %s\n", g_pAppV->payload);
+
+	// first send the prepacket with length of the message:
+
+	
+	prepacket.length = g_pAppV->length;
+	
 	//DebugWrite("About to send this response: '%s' of length '%d' ", g_pAppV->payload, g_pAppV->length);
 
     g_bBufferEmpty = FALSE;
-    
-    g_MemorySections[0].pSection = (LPBYTE)g_pAppV;		// The body of the data to be sent
-    g_MemorySections[0].length = (USHORT)g_pAppV->length;		// Its length
 
+	DebugWrite("AppV:Preparing prepacket to host og length (%d)\n", prepacket.length);
+
+	g_MemorySections[0].pSection = (LPBYTE)&prepacket;		// The body of the data to be sent
+	g_MemorySections[0].length = (USHORT)sizeof(Prepacket);
+
+	rc = EnhancedSend((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
+	DebugWrite("AppV:EnhancedSend result was (%d)\n", rc);
+	DebugWrite("AppV:Preparing to send actual data(%s) length (%d)\n", g_pAppV->payload, g_pAppV->length);
+    	
+    g_MemorySections[0].pSection = (LPBYTE)g_pAppV;		// The body of the data to be sent
+    g_MemorySections[0].length = (USHORT)g_pAppV->length;	// Its length
+
+	rc = EnhancedSend((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);
+	DebugWrite("AppV:EnhancedSend result was (%d)\n", rc);
+	DebugWrite("AppV:Sent actual data(%s)\n", g_pAppV->payload);
+
+	g_bBufferEmpty = TRUE;
 	// In the HPC case, drive the outbound data that we just put on the queue.  
 	// Note that the HPC version of
 	// SendData can be executed at any time on any thread.
