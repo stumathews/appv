@@ -15,6 +15,9 @@
 *	later when the driver should attempt to send again.
 *
 *************************************************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef DOS32
 #define CITRIX 1
@@ -60,12 +63,10 @@
 #endif
 
 #define NOT_USED_BUT_REQUIRED  
-#define DRIVER_API
+#define DRIVER_API 
 #define DRIVER_API_CALLBACK 
-
 #define SIZEOF_CONSOLIDATION_BUFFER 2000		// size of the consolidation buffer to allocate (arbitrary 2000 for the sample).
 #define NUMBER_OF_MEMORY_SECTIONS 1             // number of memory buffers to send as a single packet
-
 
 /* Driver functions that need to be implemented - called by WinStation driver */
 DRIVER_API INT DriverOpen(PVD pVD, PVDOPEN pVdOpen, PUINT16 puiSize);
@@ -74,7 +75,11 @@ DRIVER_API INT DriverInfo(PVD pVD, PDLLINFO pVdInfo, PUINT16 puiSize);
 DRIVER_API INT DriverPoll(PVD pVD, PVOID pVdPoll, PUINT16 puiSize);
 DRIVER_API INT DriverGetLastError(PVD pVD, PVDLASTERROR pVdLastError);
 NOT_USED_BUT_REQUIRED DRIVER_API INT DriverQueryInformation(PVD pVD, PVDQUERYINFORMATION pVdQueryInformation, PUINT16 puiSize);
-NOT_USED_BUT_REQUIRED DRIVER_API INT DriverSetInformation(PVD pVD, PVDSETINFORMATION pVdSetInformation, PUINT16 puiSize);	
+NOT_USED_BUT_REQUIRED DRIVER_API INT DriverSetInformation(PVD pVD, PVDSETINFORMATION pVdSetInformation, PUINT16 puiSize);
+
+#ifdef __cplusplus
+}
+#endif
 
 DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPBYTE pBuf, USHORT Length);
 
@@ -110,6 +115,7 @@ MEMORY_SECTION g_MemorySections[NUMBER_OF_MEMORY_SECTIONS];
 // Sample user data for HPC
 ULONG g_ulUserData = 0xCAACCAAC;      		
 
+#include <iostream>
 
 DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSize)
 {
@@ -127,7 +133,7 @@ DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSiz
 	
 	DebugWrite("AppV: DriverOpen entered");
     g_bBufferEmpty = TRUE;
-	
+		
 	    
 	//This is REQUIERD to be sent OUT of the function
 	*puiSize = sizeof(VDOPEN);
@@ -255,7 +261,8 @@ DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSiz
 }
 
 #pragma warning(disable:4028)
-DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, LPBYTE pBuf, USHORT Length)
+DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPBYTE pBuf, USHORT Length)
+//DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, LPBYTE pBuf, USHORT Length)
 {	
 	char* message;
 	int rc;
@@ -313,7 +320,7 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, L
     return;
 }
 
-DRIVER_API int DriverPoll(PVD pVd, PDLLPOLL pVdPoll, PUINT16 puiSize)
+DRIVER_API INT DriverPoll(PVD pVD, PVOID pVdPoll, PUINT16 puiSize)
 {
     int rc = CLIENT_STATUS_NO_DATA;
 

@@ -5,6 +5,9 @@
 * AppV Offline Streaming Client
 *
 **********************************************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <windows.h>
 #include <stdio.h>
@@ -15,10 +18,13 @@
 #include "ctxappv.h" // local header for APPV
 #include "host.h"
 
+#ifdef __cplusplus
+}
+#endif
 VOID WINAPI PrintMessage(int nResourceID, ...);
-void SafelyExit();
+void SafelyExit(PSendReceiveBuffer pBuffer, HANDLE h);
 
-int __cdecl main(INT argc, CHAR **argv)
+int main(INT argc, CHAR **argv)
 {
 	char* message;	
 	int max_try;	
@@ -34,8 +40,8 @@ int __cdecl main(INT argc, CHAR **argv)
 
 	if ((pBuffer = (PSendReceiveBuffer)malloc(sizeof(SendReceiveBuffer))) == NULL) {
 		_tprintf(_T("Could not allocate send buffer structure.\n"));
-		SafelyExit(pBuffer);
-		return; 
+		SafelyExit(pBuffer, hVC);
+		return 0; 
 	}
 
 	// Open Virtual Channel.
@@ -45,15 +51,15 @@ int __cdecl main(INT argc, CHAR **argv)
 	}
 	else {
 		_tprintf(_T("Unable to open virtual channel\n"));
-		SafelyExit(pBuffer);
-		return;
+		SafelyExit(pBuffer, hVC);
+		return 0;
 	}
 
 	// Get the channel header data with attached custom appv info
 	rc = WFVirtualChannelQuery(hVC,	WFVirtualClientData,(PVOID*) &pAboutMeData, &ulBytesRead);
 	if (rc != TRUE) {
 		_tprintf(_T("WFVirtualChannelQuery failed.\n"));
-		SafelyExit();		
+		SafelyExit(pBuffer, hVC);
 	}	
 	_tprintf(_T("Received maximum send size for channel as %d.\n"),pAboutMeData->usMaxDataSize);
 
@@ -64,7 +70,7 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("Could not send message to virtual channel.\n"));
 		PrintMessage(GetLastError());
-		SafelyExit(pBuffer);
+		SafelyExit(pBuffer, hVC);
 		return -1;
 	}	
 	_tprintf(_T("Sent Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesWritten);
@@ -78,8 +84,8 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("Could not receive message from virtual channel.\n"));
 		PrintMessage(GetLastError());
-		SafelyExit(pBuffer);
-		return;
+		SafelyExit(pBuffer, hVC);
+		return 0;
 	}	
 	
 	// Read actual data	
@@ -87,11 +93,11 @@ int __cdecl main(INT argc, CHAR **argv)
 	if (rc != TRUE) {
 		_tprintf(_T("Could not receive message from virtual channel.\n"));			
 		PrintMessage(GetLastError());
-		SafelyExit(pBuffer);
-		return;			
+		SafelyExit(pBuffer, hVC);
+		return 0;			
 	}	
 	_tprintf(_T("Received Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesRead);
-	SafelyExit(pBuffer);
+	SafelyExit(pBuffer, hVC);
 }
 
 

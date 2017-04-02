@@ -22,14 +22,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -56,6 +56,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -75,6 +76,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
