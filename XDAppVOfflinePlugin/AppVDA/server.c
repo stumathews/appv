@@ -21,27 +21,38 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#define EXPORT_ME __declspec(dllexport)
+
+PSendReceiveBuffer pBuffer = NULL;
+HANDLE      hVC = NULL;
+BOOLEAN     rc;
+PVDAPPV_C2H pAboutMeData = NULL;
+unsigned long ulBytesWritten;
+unsigned long   ulBytesRead;
+Prepacket prepacket;
+
 VOID WINAPI PrintMessage(int nResourceID, ...);
 void SafelyExit(PSendReceiveBuffer pBuffer, HANDLE h);
+void DoProtocolWork();
 
-int main(INT argc, CHAR **argv)
+
+extern "C" EXPORT_ME void CloseVirtualChannel() 
 {
-	char* message;	
-	int max_try;	
-	Prepacket prepacket;
-	PSendReceiveBuffer pBuffer = NULL;
-	HANDLE      hVC = NULL;
-	BOOLEAN     rc;
-	PVDAPPV_C2H pAboutMeData = NULL;
-	unsigned long ulBytesWritten;
-	unsigned long   ulBytesRead;
+	SafelyExit(pBuffer, hVC);
+}
 
+extern "C"  EXPORT_ME void CreateVirtualChannel()
+{	
+	int max_try;
+	
+	
 	max_try = 0;
 
 	if ((pBuffer = (PSendReceiveBuffer)malloc(sizeof(SendReceiveBuffer))) == NULL) {
 		_tprintf(_T("Could not allocate send buffer structure.\n"));
 		SafelyExit(pBuffer, hVC);
-		return 0; 
+		return;
 	}
 
 	// Open Virtual Channel.
@@ -52,9 +63,18 @@ int main(INT argc, CHAR **argv)
 	else {
 		_tprintf(_T("Unable to open virtual channel\n"));
 		SafelyExit(pBuffer, hVC);
-		return 0;
+		return;
 	}
+	DoProtocolWork();
 
+}
+
+
+
+void DoProtocolWork()
+{
+	
+	char* message;
 	// Get the channel header data with attached custom appv info
 	rc = WFVirtualChannelQuery(hVC,	WFVirtualClientData,(PVOID*) &pAboutMeData, &ulBytesRead);
 	if (rc != TRUE) {
@@ -71,7 +91,7 @@ int main(INT argc, CHAR **argv)
 		_tprintf(_T("Could not send message to virtual channel.\n"));
 		PrintMessage(GetLastError());
 		SafelyExit(pBuffer, hVC);
-		return -1;
+		return;
 	}	
 	_tprintf(_T("Sent Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesWritten);
 	
@@ -85,7 +105,7 @@ int main(INT argc, CHAR **argv)
 		_tprintf(_T("Could not receive message from virtual channel.\n"));
 		PrintMessage(GetLastError());
 		SafelyExit(pBuffer, hVC);
-		return 0;
+		return;
 	}	
 	
 	// Read actual data	
@@ -94,12 +114,11 @@ int main(INT argc, CHAR **argv)
 		_tprintf(_T("Could not receive message from virtual channel.\n"));			
 		PrintMessage(GetLastError());
 		SafelyExit(pBuffer, hVC);
-		return 0;			
+		return;			
 	}	
 	_tprintf(_T("Received Message (%s) of (%lu) bytes from virtual channel.\n"), pBuffer->payload, ulBytesRead);
 	SafelyExit(pBuffer, hVC);
 }
-
 
 
 /* Cleans up before the program exists - for whatever reason*/
