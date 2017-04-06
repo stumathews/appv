@@ -1,0 +1,17 @@
+﻿<Window x:Class="MockLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MockLauncher"
+        mc:Ignorable="d"
+        Title="Mock AppV Launcher" Height="350" Width="525">
+    <Grid>
+        <StackPanel HorizontalAlignment="Left" Height="100" Margin="205,114,0,0" VerticalAlignment="Top" Width="144">
+            <Button x:Name="btnCreateVC" Content="Create Virtual Channel" Click="btnCreateVC_Click" />
+            <Button x:Name="btnCloseVC" Content="Close Virtual Channel" Click="btnCloseVC_Click"/>
+        </StackPanel>
+        <Label Name="Status" Content="Label" HorizontalAlignment="Left" Margin="10,247.697,0,0" VerticalAlignment="Top" Width="497" Height="61.303"/>
+
+    </Grid>
+</Window>
