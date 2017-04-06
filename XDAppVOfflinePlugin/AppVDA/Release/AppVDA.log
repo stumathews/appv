@@ -1,1 +1,23 @@
-﻿  AppVDA.vcxproj -> D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.exe
+﻿Build started 06/04/2017 12:41:04.
+     1>Project "D:\src\Personal\appv\XDAppVOfflinePlugin\AppVDA\AppVDA.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\VDAAppV.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix" /I"C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos" /I"C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32" /I"C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc" /I"C:\Program Files (x86)\Citrix\WfApiSDK\include" /ID:\src\Personal\appv\XDAppVOfflinePlugin\\AppVOfflinePlugin /Zi /nologo /W3 /WX /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt server.c
+         server.c
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Program Files (x86)\Citrix\WfApiSDK\lib\Xd" /LIBPATH:"C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\binaries\lib\win32\Retail" vdapi.lib wfapi.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\VDAAppV.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.lib" /MACHINE:X86 /DLL Release\server.obj
+            Creating library D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.lib and object D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.exp
+         Generating code
+         Finished generating code
+         AppVDA.vcxproj -> D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.dll
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"D:\src\Personal\appv\XDAppVOfflinePlugin\Release\VDAAppV.dll;#2" /manifest Release\VDAAppV.dll.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\VDAAppV.unsuccessfulbuild".
+         Touching "Release\VDAAppV.lastbuildstate".
+     1>Done Building Project "D:\src\Personal\appv\XDAppVOfflinePlugin\AppVDA\AppVDA.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.92
