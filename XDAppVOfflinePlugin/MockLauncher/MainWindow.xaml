@@ -10,6 +10,8 @@
         <StackPanel HorizontalAlignment="Left" Height="100" Margin="205,114,0,0" VerticalAlignment="Top" Width="144">
             <Button x:Name="btnCreateVC" Content="Create Virtual Channel" Click="btnCreateVC_Click" />
             <Button x:Name="btnCloseVC" Content="Close Virtual Channel" Click="btnCloseVC_Click"/>
+            <Label x:Name="label" Content="Mesage"/>
+            <TextBox x:Name="textBox" Height="23" TextWrapping="Wrap" Text="TextBox"/>
         </StackPanel>
         <Label Name="Status" Content="Label" HorizontalAlignment="Left" Margin="10,247.697,0,0" VerticalAlignment="Top" Width="497" Height="61.303"/>
 

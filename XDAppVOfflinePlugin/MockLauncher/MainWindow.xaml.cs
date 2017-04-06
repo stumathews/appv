@@ -34,8 +34,10 @@ namespace MockLauncher
     {
         try
         {
+        
            var sb = new StringBuilder(100);
-           SendAndRecieve("Stuart Mathews is a dude","Stuart Mathews is a dude".Length, sb, sb.Capacity);
+           //SendAndRecieve(textBox.Text,textBox.Text.Length, sb, sb.Capacity);
+            SendAndRecieve("Stuart","Stuart".Length, sb, sb.Capacity);
            Status.Content = sb.ToString();
            MessageBox.Show("Result was " + sb);
         }
