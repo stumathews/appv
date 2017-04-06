@@ -1,0 +1,5 @@
+; Copyright (C) Citrix Systems, Inc.  All Rights Reserved.
+LIBRARY AppVOfflinePlugin
+;DESCRIPTION 'VD win32 APIs'
+EXPORTS
+        Load            @1
