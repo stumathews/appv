@@ -80,8 +80,9 @@ NOT_USED_BUT_REQUIRED DRIVER_API INT DriverSetInformation(PVD pVD, PVDSETINFORMA
 #ifdef __cplusplus
 }
 #endif
+#include <tchar.h>
 
-#import "..\TestClassLibrary\bin\Release\TestLibrary.tlb" raw_interfaces_only
+#import "..\TestClassLibrary\bin\Release\TestClassLibrary.tlb" raw_interfaces_only
 
 using namespace TestClassLibrary;
 
@@ -120,6 +121,52 @@ MEMORY_SECTION g_MemorySections[NUMBER_OF_MEMORY_SECTIONS];
 ULONG g_ulUserData = 0xCAACCAAC;      		
 
 #include <iostream>
+
+
+
+void tryCOM() 
+{
+	try {
+		HRESULT hr = CoInitialize(NULL);
+		if (SUCCEEDED(hr)) {
+
+
+			DebugWrite("%s: CoInitialize succeeded\n", "AppV");
+		}
+		else
+		{
+			DebugWrite("%s: CoInitialize FAILED\n", "AppV");
+		}
+		
+		TestClassInterfacePtr pTestClassInterface(__uuidof(TestClassInterfaceFunctions));
+		DebugWrite("%s: Got Interface succeeded(COM)\n", "AppV");
+		long ret;
+		hr = pTestClassInterface->return5(&ret);
+		DebugWrite("%s: Called functiond(COM)\n", "AppV");
+		if (!SUCCEEDED(hr))
+		{
+			DebugWrite("%s: Call to managed function failed with error %d\n", "AppV", hr);
+		}
+		DebugWrite("%s: #1 Received '%d'\n", "AppV", ret);
+		BSTR resultHello;
+		pTestClassInterface->returnHello(&resultHello);
+		//DebugWrite("AppV: hello result is '%s'");
+		_bstr_t helloResult2(resultHello);
+		TCHAR szFinal[255];
+		_stprintf(szFinal, _T("%s"), (LPCTSTR)helloResult2);
+		DebugWrite("AppV: HelloResult was '%s'", szFinal);
+		::SysFreeString(resultHello);
+		
+		CoUninitialize();
+		DebugWrite("%s: #2 Received '%d'\n", "AppV", ret);
+	}
+	catch (...)
+	{
+		DebugWrite("%s: Unknown exception occured during managed code call", "AppV");
+	}
+}
+
+
 
 DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSize)
 {
@@ -290,27 +337,9 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 
 	// Try call managed dll code:
 	// https://support.microsoft.com/en-us/help/828736/how-to-call-a-managed-dll-from-native-visual-c-code-in-visual-studio.net-or-in-visual-studio-2005
-	try
-	{
-		HRESULT hr = CoInitialize(NULL);
-
-		InterfacePtr pInterface(__uuidof(Functions));
-		long lResult = 0;
-		BSTR response;
-
-		_bstr_t message(pPacket->payload);
-		DebugWrite("%s: Calling to managed function. Param '%s'\n", "AppV", pPacket->payload);
-		pInterface->AddAsd(message, &response, &lResult);
-		if (lResult != 0)
-		{
-			DebugWrite("%s: Call to managed function failed with error %d\n", "AppV", lResult);
-		}
-		CoUninitialize();
-	}
-	catch (...)
-	{
-		DebugWrite("%s: Error trying to call managed code\n", "AppV");
-	}
+	
+	tryCOM();
+	
 	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
 	
