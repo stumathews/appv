@@ -25,6 +25,7 @@ namespace MockLauncher
     public MainWindow()
     {
       InitializeComponent();
+      
     }
 
     [DllImport("VDAAPPV.dll", EntryPoint = "SendAndRecieve", SetLastError = true, CharSet = CharSet.Ansi)]
@@ -34,8 +35,9 @@ namespace MockLauncher
     {
         try
         {
+
            var sb = new StringBuilder(100);
-           SendAndRecieve("Stuart Mathews is a dude","Stuart Mathews is a dude".Length, sb, sb.Capacity);
+           SendAndRecieve(textBlock1.Text,textBlock1.Text.Length+1, sb, sb.Capacity);
            Status.Content = sb.ToString();
            MessageBox.Show("Result was " + sb);
         }

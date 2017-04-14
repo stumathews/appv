@@ -286,26 +286,37 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
 	
+	DebugWrite("AppV: Prepacket #1");
 	message = "<Message>Hello from Receiver</Message>";
-	g_pAppV = createPacketFromData(message, strlen(message)+1);	
-	prepacket.length = g_pAppV->length;	
-
-	// Send Prepacket
+	g_pAppV = createPacketFromData(message, strlen(message) + 1);
+	prepacket.length = g_pAppV->length;
+	// Send Prepacket	
     g_bBufferEmpty = FALSE;
 	g_MemorySections[0].pSection = (LPBYTE)&prepacket;		// The body of the data to be sent
 	g_MemorySections[0].length = (USHORT)sizeof(Prepacket);
+	DebugWrite("AppV: Prepacket #2");
 	rc = SendData((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);	
+	DebugWrite("AppV: Prepacket #3");
 	if (rc != CLIENT_STATUS_SUCCESS) {
 		DebugWrite("AppV: Unable to SendData().\n");
 	}
+	
+	DebugWrite("AppV: About to send response as '%s' with string length of '%d'", message, strlen(message));
 
+	DebugWrite("AppV: #1");
     // Send actual data
     g_MemorySections[0].pSection = (LPBYTE)g_pAppV;		// The body of the data to be sent
     g_MemorySections[0].length = (USHORT)g_pAppV->length;	// Its length
+	DebugWrite("AppV: #2");
+	DebugWrite("AppV: Entire packet length is '%d'", g_pAppV->length);
+	DebugWrite("AppV: #3");
 	rc = SendData((DWORD)g_pWd, g_usVirtualChannelNum, g_MemorySections[0].pSection, g_MemorySections[0].length, &g_ulUserData, SENDDATA_NOTIFY);	
+	DebugWrite("AppV: #3");
 	if (rc != CLIENT_STATUS_SUCCESS) {
 		DebugWrite("AppV: Unable to SendData().\n");
 	}
+	
+	DebugWrite("AppV: Send '%d' Bytes", rc);
 
 	g_bBufferEmpty = TRUE;
 	// In the HPC case, drive the outbound data that we just put on the queue.  

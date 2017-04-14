@@ -56,20 +56,20 @@ extern "C" EXPORT_ME int SendAndRecieve(const char* message, int messageLength, 
 		// Allocate Read/Write buffer.
 		if (pBuffer == NULL){
 			if ((pBuffer = (PSendReceiveBuffer)malloc(sizeof(SendReceiveBuffer))) == NULL) {
-				DebugWrite("Could not allocate send buffer structure.\n");
+				DebugWrite("AppV: Could not allocate send buffer structure.\n");
 				error = 1;
 				goto cleanup;
 			}
-			DebugWrite("Allocated buffer.\n");
+			DebugWrite("AppV: Allocated buffer.\n");
 		}
 
 		// Open Virtual Channel.
 		hVC = WFVirtualChannelOpen(WF_CURRENT_SERVER, WF_CURRENT_SESSION, CTXAPPV_VIRTUAL_CHANNEL_NAME);
 		if (hVC) {
-			DebugWrite("Virtual Channel successfully opened.\n");
+			DebugWrite("AppV: Virtual Channel successfully opened.\n");
 		}
 		else {
-			DebugWrite("Unable to open virtual channel\n");
+			DebugWrite("AppV: Unable to open virtual channel\n");
 			error = 2;
 			goto cleanup;
 		}
@@ -81,7 +81,7 @@ extern "C" EXPORT_ME int SendAndRecieve(const char* message, int messageLength, 
 			OutputDebugString("WFVirtualChannelQuery failed.\n");
 		}
 
-		DebugWrite("Received maximum send size for channel as %d.\n", pAboutMeData->usMaxDataSize);
+		DebugWrite("AppV: Received maximum send size for channel as %d.\n", pAboutMeData->usMaxDataSize);
 
 		// Can't send a message larger than the maximum buffer length the protocol supports
 		if (pAboutMeData->usMaxDataSize - 4 < messageLength)
@@ -89,18 +89,19 @@ extern "C" EXPORT_ME int SendAndRecieve(const char* message, int messageLength, 
 			error = 7;
 			goto cleanup;
 		}
+			
 	
 		// Write a message to channel	
 		pBuffer = createPacketFromData(message, messageLength + 1);		
 		rc = WFVirtualChannelWrite(hVC, (PCHAR)pBuffer, pBuffer->length, &ulBytesWritten);
 		if (rc != TRUE) {
-			DebugWrite("Could not send message to virtual channel.\n");
+			DebugWrite("AppV: Could not send message to virtual channel.\n");
 			PrintMessage(GetLastError());	
 			error = 3;
 			goto cleanup;
 		}
 
-		DebugWrite("Sent Message (%s) of (%lu) bytes from virtual channel.\n", pBuffer->payload, ulBytesWritten);
+		DebugWrite("AppV: Sent Message (%s) of (%lu) bytes from virtual channel.\n", pBuffer->payload, ulBytesWritten);
 
 		// Read Response: 
 		// A response copnsists of two packets sent from the client.(PrePacket and a SendReceiveBuffer)
@@ -109,29 +110,33 @@ extern "C" EXPORT_ME int SendAndRecieve(const char* message, int messageLength, 
 		// Read prepacket
 		rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)&prepacket, sizeof(Prepacket), &ulBytesRead);
 		if (rc != TRUE) {
-			DebugWrite("Could not receive message from virtual channel.\n");
+			DebugWrite("AppV: Could not receive prepacket from virtual channel.\n");
 			PrintMessage(GetLastError());		
 			error = 4;
 			goto cleanup;
 		}
 
+		DebugWrite("AppV: Prepacket advised length to read is '%d'!", prepacket.length);
+		free(pBuffer);
+		pBuffer = (PSendReceiveBuffer)malloc(pAboutMeData->usMaxDataSize);
 		// Read actual data	
 		rc = WFVirtualChannelRead(hVC, VC_TIMEOUT_MILLISECONDS, (PCHAR)pBuffer, prepacket.length, &ulBytesRead);
 		if (rc != TRUE) {
-			DebugWrite("Could not receive message from virtual channel.\n");
+			DebugWrite("AppV: Could not receive actual message from virtual channel. error=%d\n",rc);
 			PrintMessage(GetLastError());
 			error = 5;
 			goto cleanup;
 		}
-
-		DebugWrite("Received Message (%s) of (%lu) bytes from virtual channel.\n", pBuffer->payload, ulBytesRead);
+		DebugWrite("AppV: WFVirtualChannelRead Finished.");
+		DebugWrite("AppV: Bytes read is '%d'", ulBytesRead);
+		DebugWrite("AppV: Received Message (%s) of (%lu) bytes from virtual channel.\n", pBuffer->payload, ulBytesRead);
 		
 		// Copy the response to the buffer provided by the caller
 		strcpy_s(responseBuf, pBuffer->length, pBuffer->payload);
 		return 0;
 	}
 	catch (...) {
-		DebugWrite("Unknown exception occured\n");
+		DebugWrite("AppV: Unknown exception occured\n");
 		// this defaults to cleanup:
 		error = 6;
 	}
