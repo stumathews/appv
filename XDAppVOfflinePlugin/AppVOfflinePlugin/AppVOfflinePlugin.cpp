@@ -81,6 +81,10 @@ NOT_USED_BUT_REQUIRED DRIVER_API INT DriverSetInformation(PVD pVD, PVDSETINFORMA
 }
 #endif
 
+#import "..\TestClassLibrary\bin\Release\TestLibrary.tlb" raw_interfaces_only
+
+using namespace TestClassLibrary;
+
 DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPBYTE pBuf, USHORT Length);
 
 // Utility function that will send data on the channel
@@ -263,26 +267,50 @@ DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSiz
 #pragma warning(disable:4028)
 DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPBYTE pBuf, USHORT Length)
 //DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVOID pVd, USHORT uChan, LPBYTE pBuf, USHORT Length)
-{	
+{
 	char* message;
 	int rc;
 	Prepacket prepacket;
 	// Define a pointer pPacket
-    WIRE_PTR(SendReceiveBuffer, pPacket);
+	WIRE_PTR(SendReceiveBuffer, pPacket);
 
 	// Cast void pointer to SendReceiverBuffer ptr
 	WIRE_READ(SendReceiveBuffer, pPacket, pBuf);
 
 	DebugWrite("AppV: ICADataArrival entered. Data has arrived from the server.\n");
-	
-    // This protocol is completely synchronous - host should not send
-    // another message with a pending response.
 
-    if(!g_bBufferEmpty)
+	// This protocol is completely synchronous - host should not send
+	// another message with a pending response.
+
+	if (!g_bBufferEmpty)
 	{
 		DebugWrite("AppV: ICADataArrival - Error: not all data was sent, buffer not empty. Will wait for next send. Returning.\n");
-        return;
-    }
+		return;
+	}
+
+	// Try call managed dll code:
+	// https://support.microsoft.com/en-us/help/828736/how-to-call-a-managed-dll-from-native-visual-c-code-in-visual-studio.net-or-in-visual-studio-2005
+	try
+	{
+		HRESULT hr = CoInitialize(NULL);
+
+		InterfacePtr pInterface(__uuidof(Functions));
+		long lResult = 0;
+		BSTR response;
+
+		_bstr_t message(pPacket->payload);
+		DebugWrite("%s: Calling to managed function. Param '%s'\n", "AppV", pPacket->payload);
+		pInterface->AddAsd(message, &response, &lResult);
+		if (lResult != 0)
+		{
+			DebugWrite("%s: Call to managed function failed with error %d\n", "AppV", lResult);
+		}
+		CoUninitialize();
+	}
+	catch (...)
+	{
+		DebugWrite("%s: Error trying to call managed code\n", "AppV");
+	}
 	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
 	
