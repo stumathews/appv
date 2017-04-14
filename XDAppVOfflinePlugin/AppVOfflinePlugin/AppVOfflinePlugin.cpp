@@ -86,6 +86,7 @@ NOT_USED_BUT_REQUIRED DRIVER_API INT DriverSetInformation(PVD pVD, PVDSETINFORMA
 
 using namespace TestClassLibrary;
 
+
 DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPBYTE pBuf, USHORT Length);
 
 // Utility function that will send data on the channel
@@ -337,9 +338,11 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 
 	// Try call managed dll code:
 	// https://support.microsoft.com/en-us/help/828736/how-to-call-a-managed-dll-from-native-visual-c-code-in-visual-studio.net-or-in-visual-studio-2005
+
 	
 	tryCOM();
-	
+
+
 	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
 	
