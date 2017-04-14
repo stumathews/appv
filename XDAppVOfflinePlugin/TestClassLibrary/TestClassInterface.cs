@@ -7,7 +7,7 @@ namespace TestClassLibrary
 {
     public interface TestClassInterface
     {
-        int AddAsd(string asd, ref string responseText);
+        int AddAsd(string asd);
         int return5();
         string returnHello();
         string echo(string msg);

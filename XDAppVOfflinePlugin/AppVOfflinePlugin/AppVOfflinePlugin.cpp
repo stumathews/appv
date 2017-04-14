@@ -149,14 +149,19 @@ void tryCOM()
 			DebugWrite("%s: Call to managed function failed with error %d\n", "AppV", hr);
 		}
 		DebugWrite("%s: #1 Received '%d'\n", "AppV", ret);
-		BSTR resultHello;
-		pTestClassInterface->returnHello(&resultHello);
+		//BSTR response;
+		BSTR asd = ::SysAllocString(L"462dfa90-9e09-429e-a6f3-00cb3e9bf90b;\\\\londondc.london.local\\appvshare\\EPM 3.appv;4148dc52-d7d5-47c3-a570-396aa63fa9fe;d2022911-4251-4c86-b8cd-e2bb092443fd;EPM Opsætningsmodul");
+		DebugWrite("%s: BRSs Allocated", "AppV");
+		pTestClassInterface->AddAsd(asd, &ret);
+		//pTestClassInterface->returnHello(&response);
+		DebugWrite("%s: AddAsdCalled with result %ld", "AppV", ret);
 		//DebugWrite("AppV: hello result is '%s'");
-		_bstr_t helloResult2(resultHello);
-		TCHAR szFinal[255];
-		_stprintf(szFinal, _T("%s"), (LPCTSTR)helloResult2);
-		DebugWrite("AppV: HelloResult was '%s'", szFinal);
-		::SysFreeString(resultHello);
+		//_bstr_t helloResult2(response);
+		//TCHAR szFinal[255];
+		//_stprintf(szFinal, _T("%s"), (LPCTSTR)helloResult2);
+		//DebugWrite("AppV: HelloResult was '%s'", szFinal);
+		//::SysFreeString(response);
+		::SysFreeString(asd);
 		
 		CoUninitialize();
 		DebugWrite("%s: #2 Received '%d'\n", "AppV", ret);

@@ -5,13 +5,13 @@ namespace TestClassLibrary
 {
     public class TestClassInterfaceFunctions : TestClassInterface
     {
-        public int AddAsd(string asd, ref string responseText)
+        public int AddAsd(string asd)
         {
-            if (responseText == null) throw new ArgumentNullException("responseText");
+            
             var client = new AppVService((s, s1) => { });
-            var response = client.SendMessage(new Request() {MessageBody = asd, RequestTask = RequestTask.AddClientPackage});
-            responseText = response.MessageBody;
-            return (int)response.ResponseCode;
+            var response = client.SendMessage(new Request() {MessageBody = "test", RequestTask = RequestTask.AddClientPackage});
+            //SresponseText = response.MessageBody;
+            return (int)6;
         }
 
     public string echo( string msg )
