@@ -22,7 +22,21 @@ namespace TestClassLibrary
 
     public string echo( string msg )
     {
-      return msg;
+      string ret = string.Empty;
+      try
+      {
+         var client = new AppVService((s, s1) => {} );
+         var response = client.SendMessage(new Request() {MessageBody = msg, RequestTask = RequestTask.AddClientPackage});
+         ret = string.Format("{0}{1}", response.ResponseCode, response.MessageBody);
+      }
+      catch(Exception e)
+      {
+        const int max_length = 200;
+        string message = e.Message + e.StackTrace;
+        
+        return message.Length <= max_length? message : message.Substring(0,max_length);
+      }
+      return string.IsNullOrEmpty(ret) ? "Hello" : ret;    
     }
 
     public int return5()
