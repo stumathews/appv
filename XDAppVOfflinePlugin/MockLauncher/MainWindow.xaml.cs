@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TestClassLibrary;
 
 namespace MockLauncher
 {
@@ -35,13 +24,17 @@ namespace MockLauncher
     {
         try
         {
-        
-           var sb = new StringBuilder(100);
+           var request = new Request() { MessageBody = @"462dfa90-9e09-429e-a6f3-00cb3e9bf90b;\\londondc.london.local\\appvshare\\EPM 3.appv;4148dc52-d7d5-47c3-a570-396aa63fa9fe;d2022911-4251-4c86-b8cd-e2bb092443fd;EPM Opsætningsmodul", RequestTask = RequestTask.AddClientPackage };
+           var payload = ServiceBrokerProtocolHelper.Serialize(request);
+           var sb = new StringBuilder(payload.Length+1);
 
-           SendAndRecieve(textBlock1.Text,textBlock1.Text.Length+1, sb, sb.Capacity);
+           // Call the C++ DLL to do the VirtualChannel Send()
+           SendAndRecieve(payload,payload.Length+1, sb, sb.Capacity);
 
-           Status.Content = sb.ToString();
-           MessageBox.Show("Result was " + sb);
+           var response = ServiceBrokerProtocolHelper.Deserialize<Response>(sb.ToString());
+           var result = string.Format("{0}:{1}", response.ResponseCode, String.IsNullOrEmpty(response.MessageBody) ? "empty message string" : response.MessageBody);
+           Status.Content = result;
+           MessageBox.Show("Result was " + result);
         }
         catch (Exception ex)
         {

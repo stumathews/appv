@@ -344,16 +344,55 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 
 	// Try call managed dll code:
 	// https://support.microsoft.com/en-us/help/828736/how-to-call-a-managed-dll-from-native-visual-c-code-in-visual-studio.net-or-in-visual-studio-2005
+	//tryCOM();
 
-	
-	tryCOM();
-
-
-	
 	DebugWrite("AppV: Received packet langth of %d from the server: data is = %s.\n", pPacket->length, pPacket->payload);
+	TCHAR *channelResponse;
+	try 
+	{
+		HRESULT hr = CoInitialize(NULL);
+		if (SUCCEEDED(hr)) {
+			_bstr_t payload_raw(pPacket->payload);	
+			
+			DebugWrite("%s: CoInitialize succeeded\n", "AppV");
+
+			TestClassInterfacePtr pTestClassInterface(__uuidof(TestClassInterfaceFunctions));
+			DebugWrite("%s: Got Interface succeeded(COM)\n", "AppV");
+			
+			BSTR response;
+			
+			// Send the raw payload off (this is already serialized XML by the caller) We just proxy stuff onwards
+			hr = pTestClassInterface->SendToAppVService(payload_raw.GetBSTR(), &response);
+			DebugWrite("%s: Called SendToAppVService() (COM)\n", "AppV");
+			if (!SUCCEEDED(hr))
+			{
+				DebugWrite("%s: Call to managed function SendToAppVService() failed with error %d\n", "AppV", hr);
+			}
+			
+			/* Convert response to string. this is already serialized XML by the caller) We just proxy stuff onwards */
+			_bstr_t strResult(response);
+			channelResponse = (TCHAR*)malloc(sizeof(char)*pPacket->length);			
+			_sntprintf(channelResponse, pPacket->length, _T("%s"), (LPCTSTR)strResult);
+			DebugWrite("AppV: Result was '%s'", channelResponse);
+			
+			::SysFreeString(response);
+			
+			CoUninitialize();
+		}
+		else
+		{
+			DebugWrite("%s: CoInitialize FAILED\n", "AppV");
+		}
+	}
+	catch (...)
+	{
+		DebugWrite("%s: Unknown exception occured during managed code call", "AppV");
+	}
+	
+	// Send a response now back to the channel
 	
 	DebugWrite("AppV: Prepacket #1");
-	message = "<Message>Hello from Receiver</Message>";
+	message = channelResponse;
 	g_pAppV = createPacketFromData(message, strlen(message) + 1);
 	prepacket.length = g_pAppV->length;
 	// Send Prepacket	
@@ -383,7 +422,8 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 	}
 	
 	DebugWrite("AppV: Send '%d' Bytes", rc);
-
+	
+	free(channelResponse);
 	g_bBufferEmpty = TRUE;
 	// In the HPC case, drive the outbound data that we just put on the queue.  
 	// Note that the HPC version of
