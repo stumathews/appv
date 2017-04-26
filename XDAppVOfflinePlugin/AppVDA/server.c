@@ -1,8 +1,9 @@
 /**********************************************************************
 *
 * ctxappv.c
-*
-* AppV Offline Streaming Client
+* VirtualChannel library used by laucher to communicate with the AppV offline plugin.
+* Primarily the SendAndRecieve() function is used to establish a connection and send information
+* to the AppV offline plugin.
 *
 **********************************************************************/
 #ifdef __cplusplus

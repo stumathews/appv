@@ -22,6 +22,12 @@ namespace MockLauncher
 
     private void btnCreateVC_Click( object sender, RoutedEventArgs e )
     {
+      // Check to see that the launcher is running on the VDA if not dont try to connect to 
+      // a virtual channel as one will not be available if launcher running on endpoint
+      // Which will be the case we we're using the launcher to resolve paths in the AppV VFS for utility sake.
+      var sessionName = Environment.GetEnvironmentVariable("SESSIONNAME");
+      if(sessionName.StartsWith("ICA"))
+      {
         try
         {
            var request = new Request() { MessageBody = @"462dfa90-9e09-429e-a6f3-00cb3e9bf90b;\\londondc.london.local\\appvshare\\EPM 3.appv;4148dc52-d7d5-47c3-a570-396aa63fa9fe;d2022911-4251-4c86-b8cd-e2bb092443fd;EPM Opsætningsmodul", RequestTask = RequestTask.AddClientPackage };
@@ -40,6 +46,7 @@ namespace MockLauncher
         {
             MessageBox.Show("Error sendreceive: "+ ex.Message);
         }
+      }
     }
 
     private void btnCloseVC_Click( object sender, RoutedEventArgs e )
