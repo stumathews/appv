@@ -32,7 +32,23 @@ namespace TestClassLibrary
                     var config = ServiceBrokerProtocolHelper.Deserialize<Config>(request.MessageBody);
                     // Set/Overwrite (key is created if not exists)
                     Registry.SetValue(keyName, "ApplicationStartDetails", config.Asds, RegistryValueKind.MultiString);
-                    Registry.SetValue(keyName, "IsolationGroupStartDetails", config.Isds, RegistryValueKind.MultiString); 
+                    Registry.SetValue(keyName, "IsolationGroupStartDetails", config.Isds, RegistryValueKind.MultiString);
+            
+                    // What we should do now is actually add the isolation groups if we need to or add packages if we need to.
+                    // ** This could be slow even if its already added/created so might need to optimise this process **
+                    // Add the packages first
+                    foreach(var asd in config.Asds)
+                    {
+                        var addAsdRequest = new Request { RequestTask = RequestTask.AddClientPackage, MessageBody = asd };
+                        var addAsdResponse = ForwardRequestToAppVService(addAsdRequest);
+                    }
+                    
+                    // Add the Isolation groups afterwards
+                    foreach(var isd in config.Isds)
+                    {
+                        var addIsdRequest = new Request { RequestTask = RequestTask.UpdateIsolationGroups, MessageBody = isd };
+                        var addIsdResponse = ForwardRequestToAppVService(addIsdRequest);
+                    }
                     response.ResponseCode = VirtualChannelResponseCode.Success;                                    
                     break;
                 case VirtualChannelRequestTask.ForwardToAppVService:
