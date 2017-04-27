@@ -40,12 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppVClientInfo.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="TestClassInterfaceFunctions.cs" />
     <Compile Include="AppVService.cs" />
     <Compile Include="TestClassInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceBrokerProtocol.cs" />
     <Compile Include="StreamString.cs" />
+    <Compile Include="VirtualChannelProtocol.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
