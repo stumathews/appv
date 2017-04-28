@@ -41,14 +41,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppVClientInfo.cs" />
-    <Compile Include="Config.cs" />
     <Compile Include="TestClassInterfaceFunctions.cs" />
     <Compile Include="AppVService.cs" />
     <Compile Include="TestClassInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceBrokerProtocol.cs" />
-    <Compile Include="StreamString.cs" />
     <Compile Include="VirtualChannelProtocol.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\DevTrees\BugFix-UK_7328\AppV\Components\AppVCommon\CommonPoshLib\CommonPoshLib.csproj">
+      <Project>{53befe26-8a4a-4349-b07f-141b6ebe59e1}</Project>
+      <Name>CommonPoshLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

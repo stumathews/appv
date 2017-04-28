@@ -123,58 +123,6 @@ ULONG g_ulUserData = 0xCAACCAAC;
 
 #include <iostream>
 
-
-
-void tryCOM() 
-{
-	try {
-		HRESULT hr = CoInitialize(NULL);
-		if (SUCCEEDED(hr)) {
-
-
-			DebugWrite("%s: CoInitialize succeeded\n", "AppV");
-		}
-		else
-		{
-			DebugWrite("%s: CoInitialize FAILED\n", "AppV");
-		}
-		
-		TestClassInterfacePtr pTestClassInterface(__uuidof(TestClassInterfaceFunctions));
-		DebugWrite("%s: Got Interface succeeded(COM)\n", "AppV");
-		long ret;
-		hr = pTestClassInterface->return5(&ret);
-		DebugWrite("%s: Called functiond(COM)\n", "AppV");
-		if (!SUCCEEDED(hr))
-		{
-			DebugWrite("%s: Call to managed function failed with error %d\n", "AppV", hr);
-		}
-		DebugWrite("%s: #1 Received '%d'\n", "AppV", ret);
-		BSTR response;
-		BSTR asd = ::SysAllocString(L"462dfa90-9e09-429e-a6f3-00cb3e9bf90b;\\londondc.london.local\\appvshare\\EPM 3.appv;4148dc52-d7d5-47c3-a570-396aa63fa9fe;d2022911-4251-4c86-b8cd-e2bb092443fd;EPM Opsætningsmodul");
-		DebugWrite("%s: BRSs Allocated", "AppV");
-		//pTestClassInterface->AddAsd(asd, &ret);		
-		//pTestClassInterface->returnHello(&response);
-		pTestClassInterface->echo(asd, &response);
-		//DebugWrite("%s: AddAsdCalled with result %ld", "AppV", ret);
-		
-		_bstr_t helloResult2(response);
-		TCHAR szFinal[255];
-		_stprintf(szFinal, _T("%s"), (LPCTSTR)helloResult2);
-		DebugWrite("AppV: echo Result was '%s'", szFinal);
-		::SysFreeString(response);
-		::SysFreeString(asd);
-		
-		CoUninitialize();
-		DebugWrite("%s: #2 Received '%d'\n", "AppV", ret);
-	}
-	catch (...)
-	{
-		DebugWrite("%s: Unknown exception occured during managed code call", "AppV");
-	}
-}
-
-
-
 DRIVER_API int DriverOpen(IN PVD pVd, IN OUT PVDOPEN pVdOpen, OUT PUINT16 puiSize)
 {
     WDSETINFORMATION   wdsi;
@@ -362,7 +310,7 @@ DRIVER_API_CALLBACK static void WFCAPI ICADataArrival(PVD pVD, USHORT uchan, LPB
 			BSTR response;
 			
 			// Send the raw payload off (this is already serialized XML by the caller) We just proxy stuff onwards
-			hr = pTestClassInterface->SendToAppVService(payload_raw.GetBSTR(), &response);
+			hr = pTestClassInterface->ProcessVirtualChannelRequest(payload_raw.GetBSTR(), &response);
 			DebugWrite("%s: Called SendToAppVService() (COM)\n", "AppV");
 			if (!SUCCEEDED(hr))
 			{

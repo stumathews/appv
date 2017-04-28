@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
 using System.Text;
-
+using Citrix.VirtApp.Vda.Common;
 using TestClassLibrary;
 
 namespace TestClassLibrary

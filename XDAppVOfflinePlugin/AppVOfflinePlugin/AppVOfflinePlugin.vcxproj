@@ -54,7 +54,7 @@
       <WarningLevel>Level1</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\AppVOfflinePlugin\asprintf\asprintf-1.0;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVOfflinePlugin\asprintf\asprintf-1.0;$(SolutionDir)\AppVOfflinePlugin\asprintf\asprintf-1.0;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>StdCall</CallingConvention>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -75,7 +75,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\AppVOfflinePlugin\asprintf\asprintf-1.0;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVOfflinePlugin\asprintf\asprintf-1.0;$(SolutionDir)\AppVOfflinePlugin\asprintf\asprintf-1.0;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>StdCall</CallingConvention>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CompileAs>CompileAsCpp</CompileAs>

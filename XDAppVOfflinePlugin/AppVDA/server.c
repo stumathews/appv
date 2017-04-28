@@ -15,7 +15,7 @@ extern "C" {
 #include <tchar.h>
 
 #include <wfapi.h>   // Citrix Server SDK
-#include <appv.h>    // Citrix shared header
+#include <appv.h>
 #include "ctxappv.h" // local header for APPV
 #include "host.h"
 

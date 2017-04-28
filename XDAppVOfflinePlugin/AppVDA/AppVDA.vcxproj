@@ -43,9 +43,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVOfflinePlugin;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVOfflinePlugin;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVDA;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -76,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\src\Personal\appv\XDAppVOfflinePlugin\AppVDA;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\shared\inc\citrix;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\windos;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc\win32;C:\Program Files (x86)\Citrix\vsdk\VCSdk\binaries\vcsdk\layout\src\inc;C:\Program Files (x86)\Citrix\WfApiSDK\include;$(SolutionDir)\AppVOfflinePlugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -95,6 +97,7 @@
     <ClCompile Include="server.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AppVOfflinePlugin\appv.h" />
     <ClInclude Include="ctxappv.h" />
     <ClInclude Include="host.h" />
     <ClInclude Include="server.h" />

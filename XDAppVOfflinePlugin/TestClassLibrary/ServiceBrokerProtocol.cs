@@ -75,7 +75,9 @@ namespace TestClassLibrary
         RemoveAllPublishingServers,
         ConfigureSharedContentStoreMode,
         CleanupCache,
-        StopNamedPipeServer
+        StopNamedPipeServer,
+        // The offline plugin will send config data to the AppV service so that it can update it on the client endpoint
+        SyncOfflinePluginData,
     }
 
     /// <summary>
